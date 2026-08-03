@@ -4,6 +4,7 @@ import { AlertTriangle, ShieldAlert, Search, Sparkles, ArrowRight } from "lucide
 import type { MatchResult, UnifiedLead } from "@/lib/lead-identity/types";
 import { OwnershipBadge } from "./OwnershipBadge";
 import { formatDistanceToNow } from "date-fns";
+import { maskPhoneDisplay } from "@/lib/lead-identity/normalize";
 
 interface Props {
   open: boolean;
@@ -33,7 +34,10 @@ export function DuplicateModal({ open, onClose, result, onForceCreate, onUseExis
           <DialogTitle className={`flex items-center gap-2 ${header.color}`}>
             <Icon className="h-5 w-5" /> {header.title}
           </DialogTitle>
-          <DialogDescription>{header.desc}</DialogDescription>
+          <DialogDescription>
+            {header.desc}{" "}
+            <span className="text-muted-foreground">Phones shown masked (ops PII policy).</span>
+          </DialogDescription>
         </DialogHeader>
 
         {candidates.length > 0 && (
@@ -43,11 +47,17 @@ export function DuplicateModal({ open, onClose, result, onForceCreate, onUseExis
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="font-medium text-sm">{c.lead.name}</div>
-                    <div className="text-[11px] text-muted-foreground">
-                      {c.lead.phoneE164 || c.lead.phoneRaw || "no phone"} · {c.lead.area || "no area"}
+                    <div className="text-[11px] text-muted-foreground font-mono">
+                      {maskPhoneDisplay(c.lead.phoneE164 || c.lead.phoneRaw)} · {c.lead.area || "no area"}
                     </div>
                     <div className="text-[10px] text-muted-foreground mt-1">
-                      Last activity {formatDistanceToNow(new Date(c.lead.lastActivityAt), { addSuffix: true })}
+                      Last activity{" "}
+                      {(() => {
+                        const d = new Date(c.lead.lastActivityAt);
+                        return Number.isNaN(d.getTime())
+                          ? "recently"
+                          : formatDistanceToNow(d, { addSuffix: true });
+                      })()}
                     </div>
                   </div>
                   <div className="text-right shrink-0">

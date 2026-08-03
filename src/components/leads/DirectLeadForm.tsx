@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { detectZone } from "@/lib/lead-identity/parser";
-import { useIdentityStore } from "@/lib/lead-identity/store";
+import {
+  checkDuplicatesBridged,
+  createLeadWithCrmSync,
+  openCrmLeadForUnified,
+} from "@/lib/lead-identity/bridge";
+import { getTcm } from "@/lib/store";
 import type { MatchResult, ParsedLeadDraft, UnifiedLead } from "@/lib/lead-identity/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,9 +39,6 @@ const phoneOk = (v: string) => v.replace(/\D/g, "").length >= 10;
 const emailOk = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 export function DirectLeadForm({ onCreated }: Props) {
-  const checkDuplicates = useIdentityStore((s) => s.checkDuplicates);
-  const createLead = useIdentityStore((s) => s.createLead);
-
   const [draft, setDraft] = useState<ParsedLeadDraft>(emptyDraft());
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [match, setMatch] = useState<MatchResult | null>(null);
@@ -77,24 +79,26 @@ export function DirectLeadForm({ onCreated }: Props) {
       return;
     }
     setSubmitting(true);
-    const result = checkDuplicates(draft);
+    const result = checkDuplicatesBridged(draft);
     setMatch(result);
     setShowModal(true);
     setSubmitting(false);
   };
 
   const onForceCreate = () => {
-    const lead = createLead(draft);
-    toast.success(`Lead created · ULID ${lead.ulid.slice(0, 12)}…`);
+    const { unified, assignment } = createLeadWithCrmSync(draft);
+    const tcm = getTcm(assignment.tcmId);
+    toast.success(`Lead created · assigned to ${tcm?.name ?? "TCM"}`);
     setShowModal(false);
     setDraft(emptyDraft());
     setTouched({});
     setMatch(null);
-    onCreated?.(lead);
+    onCreated?.(unified);
   };
 
   const onUseExisting = (lead: UnifiedLead) => {
-    toast.info(`Opening existing lead: ${lead.name}`);
+    const opened = openCrmLeadForUnified(lead.ulid);
+    toast.info(opened ? `Opened ${lead.name} in CRM` : `Existing lead: ${lead.name}`);
     setShowModal(false);
     onCreated?.(lead);
   };

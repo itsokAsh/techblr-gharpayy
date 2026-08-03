@@ -69,10 +69,20 @@ export function LeadJourneyStepper({
         hint: checkin ? checkin.stage.replace(/_/g, " ") : bookingDone ? "Ready" : "Open" },
     ];
 
+    // Prefer urgent steps over an incomplete dossier sitting first in the list.
+    const forceActive: JourneyTab | null = pendingPost
+      ? "post"
+      : openTour
+        ? "tour"
+        : bookingDone && !checkinDone
+          ? "checkin"
+          : null;
+
     let foundActive = false;
     return order.map((o): Step => {
       let state: StepState;
       if (o.done) state = "done";
+      else if (forceActive) state = o.key === forceActive ? "active" : "todo";
       else if (!foundActive) { state = "active"; foundActive = true; }
       else state = "todo";
       return { key: o.key, label: o.label, icon: o.icon, state, cta: o.cta, hint: o.hint };

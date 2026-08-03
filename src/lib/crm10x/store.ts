@@ -184,17 +184,18 @@ export const useCRM10x = create<CRM10xState>()(
       markMessageBookedAfter: (leadId, bookingId, bookingTs) => {
         const bookingTime = bookingTs ? +new Date(bookingTs) : Date.now();
         const WINDOW = 14 * 86_400_000;
-        set((s) => ({
-          messageOutcomes: s.messageOutcomes.map((m) => {
-            if (m.leadId !== leadId) return m;
-            if (m.attributedBookingId) return m; // already credited — never re-attribute
-            const sentTs = +new Date(m.ts);
-            // Send must be BEFORE the booking AND within 14d window before booking.
-            if (sentTs > bookingTime) return m;
-            if (bookingTime - sentTs > WINDOW) return m;
-            return { ...m, bookedAfter: true, attributedBookingId: bookingId };
-          }),
-        }));
+        let changed = false;
+        const messageOutcomes = get().messageOutcomes.map((m) => {
+          if (m.leadId !== leadId) return m;
+          if (m.attributedBookingId) return m;
+          const sentTs = +new Date(m.ts);
+          if (sentTs > bookingTime) return m;
+          if (bookingTime - sentTs > WINDOW) return m;
+          changed = true;
+          return { ...m, bookedAfter: true, attributedBookingId: bookingId };
+        });
+        if (!changed) return;
+        set({ messageOutcomes });
       },
 
       // selectors

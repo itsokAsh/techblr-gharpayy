@@ -230,8 +230,12 @@ export function parseLead(raw: string): ParsedLeadDraft | null {
   const email = emailMatch?.[0] ?? "";
 
   // ---------- Name ----------
+  // Allow leading emoji / bullets (📝 *Name:*) — Gharpayy WhatsApp forms put
+  // an emoji before the label, so ^\s*Name misses them while Phone/Email still
+  // match via digit/@ patterns.
   let name = grab(
-    /(?:^|\n)\s*Name\s*[:\-–*]+\s*([^\n,📱\d]{2,60})/im,
+    /(?:^|\n)[^\S\n]*[^\n\w]*Name\s*[:\-–*]+\s*([^\n,📱\d]{2,60})/im,
+    /\bName\s*[:\-–*]+\s*([A-Za-z][A-Za-z.'\-\s]{0,50}?)(?=\s*(?:📱|Phone|Mobile|Email|E-mail|Preferred|Location|Budget|Move|$|\n))/im,
     /(?:^|\n)\s*\.Name\s+([^\n.]{2,60})/im,
     /(?:^|\n)\s*[-–]\s*([A-Z][a-z][^\n\d]{1,40})\s*\n/m,
   );
@@ -248,7 +252,11 @@ export function parseLead(raw: string): ParsedLeadDraft | null {
   if (!name) {
     const lines = clean.split("\n").map((l) => l.trim()).filter(Boolean);
     for (const line of lines.slice(0, 3)) {
-      const stripped = line.replace(EMOJI_RE, "").replace(/^[-–*•]\s*/, "").trim();
+      const stripped = line
+        .replace(EMOJI_RE, "")
+        .replace(/^[-–*•]\s*/, "")
+        .replace(/^Name\s*[:\-–*]+\s*/i, "")
+        .trim();
       const inlineMatch = stripped.match(/^([A-Za-z][A-Za-z\s.]{1,40}?)\s+(?:\+?91)?[6-9]\d{9}/);
       if (inlineMatch) { name = inlineMatch[1].trim(); break; }
       if (looksLikeName(stripped)) { name = stripped; break; }

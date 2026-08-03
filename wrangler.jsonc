@@ -4,4 +4,11 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  "kv_namespaces": [
+    {
+      "binding": "OPS_CACHE",
+      "id": "local-ops-cache",
+      "preview_id": "local-ops-cache-preview"
+    }
+  ]
 }

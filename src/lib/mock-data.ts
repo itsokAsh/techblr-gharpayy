@@ -55,13 +55,14 @@ import { pgsAsProperties } from "./property-source";
 // of the catalog comes straight from the Property Hub PG database — no more
 // dummy "Gharpayy Koramangala 5B" placeholders in the action picker.
 const LEGACY_SEED: Property[] = [
-  { id: "p-1", name: "Koramangala — Seed", area: "Koramangala", totalBeds: 24, vacantBeds: 6, daysSinceLastBooking: 4, pricePerBed: 14000 },
-  { id: "p-2", name: "Indiranagar — Seed", area: "Indiranagar", totalBeds: 18, vacantBeds: 9, daysSinceLastBooking: 11, pricePerBed: 12500 },
-  { id: "p-3", name: "HSR Layout — Seed", area: "HSR Layout", totalBeds: 12, vacantBeds: 2, daysSinceLastBooking: 1, pricePerBed: 11000 },
-  { id: "p-4", name: "Whitefield — Seed", area: "Whitefield", totalBeds: 32, vacantBeds: 14, daysSinceLastBooking: 18, pricePerBed: 10500 },
-  { id: "p-5", name: "BTM — Seed", area: "BTM", totalBeds: 16, vacantBeds: 1, daysSinceLastBooking: 0, pricePerBed: 13000 },
-  { id: "p-6", name: "Koramangala 8B — Seed", area: "Koramangala", totalBeds: 28, vacantBeds: 3, daysSinceLastBooking: 2, pricePerBed: 14500 },
-  { id: "p-7", name: "Whitefield Hope Farm — Seed", area: "Whitefield", totalBeds: 22, vacantBeds: 11, daysSinceLastBooking: 9, pricePerBed: 10000 },
+  { id: "p-1", name: "Koramangala — Seed", area: "Koramangala", totalBeds: 24, vacantBeds: 6, version: 1, daysSinceLastBooking: 4, pricePerBed: 14000 },
+  { id: "p-2", name: "Indiranagar — Seed", area: "Indiranagar", totalBeds: 18, vacantBeds: 9, version: 1, daysSinceLastBooking: 11, pricePerBed: 12500 },
+  { id: "p-3", name: "HSR Layout — Seed", area: "HSR Layout", totalBeds: 12, vacantBeds: 2, version: 1, daysSinceLastBooking: 1, pricePerBed: 11000 },
+  { id: "p-4", name: "Whitefield — Seed", area: "Whitefield", totalBeds: 32, vacantBeds: 14, version: 1, daysSinceLastBooking: 18, pricePerBed: 10500 },
+  { id: "p-5", name: "BTM — Seed", area: "BTM", totalBeds: 16, vacantBeds: 0, version: 1,
+    nextVacancyAt: iso(addDays(now, 4)), daysSinceLastBooking: 0, pricePerBed: 13000 },
+  { id: "p-6", name: "Koramangala 8B — Seed", area: "Koramangala", totalBeds: 28, vacantBeds: 3, version: 1, daysSinceLastBooking: 2, pricePerBed: 14500 },
+  { id: "p-7", name: "Whitefield Hope Farm — Seed", area: "Whitefield", totalBeds: 22, vacantBeds: 11, version: 1, daysSinceLastBooking: 9, pricePerBed: 10000 },
 ];
 
 export const PROPERTIES: Property[] = [...pgsAsProperties(), ...LEGACY_SEED];
@@ -146,7 +147,7 @@ export const LEADS: Lead[] = [
     createdAt: iso(addDays(now, -6)), updatedAt: iso(addDays(now, -2)) },
   { id: "l-7", name: "Arjun K.", phone: "+91 98xxx 70011", source: "Google",
     budget: 12000, moveInDate: iso(addDays(now, 10)), preferredArea: "BTM",
-    assignedTcmId: "tcm-3", stage: "new", intent: "warm", confidence: 48,
+    assignedTcmId: "tcm-3", stage: "tour-scheduled", intent: "warm", confidence: 48,
     tags: [], nextFollowUpAt: iso(addHours(now, 2)), responseSpeedMins: 14,
     createdAt: iso(addHours(now, -2)), updatedAt: iso(addHours(now, -2)) },
   { id: "l-16", name: "Manish T.", phone: "+91 91xxx 60099", source: "Justdial",
@@ -161,9 +162,9 @@ export const LEADS: Lead[] = [
     createdAt: iso(addDays(now, -2)), updatedAt: iso(addHours(now, -5)) },
   { id: "l-18", name: "Faisal N.", phone: "+91 90xxx 13500", source: "Instagram",
     budget: 9500, moveInDate: iso(addDays(now, 30)), preferredArea: "HSR Layout",
-    assignedTcmId: "tcm-3", stage: "new", intent: "cold", confidence: 28,
-    tags: ["far-out"], nextFollowUpAt: iso(addDays(now, -1)), responseSpeedMins: 31,
-    createdAt: iso(addDays(now, -5)), updatedAt: iso(addDays(now, -3)) },
+    assignedTcmId: "tcm-3", stage: "contacted", intent: "cold", confidence: 28,
+    tags: ["no-show", "far-out"], nextFollowUpAt: iso(addMinutes(now, -15)), responseSpeedMins: 31,
+    createdAt: iso(addDays(now, -5)), updatedAt: iso(addHours(now, -2)) },
 
   /* ====== tcm-4 Neha · Whitefield · hot streak ====== */
   { id: "l-4", name: "Sneha P.", phone: "+91 90xxx 24681", source: "Google",
@@ -226,12 +227,14 @@ export const TOURS: Tour[] = [
     createdAt: iso(addDays(now, -2)), updatedAt: iso(addDays(now, -1)) },
   { id: "t-4", leadId: "l-6", propertyId: "p-2", tcmId: "tcm-2",
     scheduledAt: iso(at(addDays(now, -1), 12, 0)), status: "completed", decision: null,
+    completedAt: iso(addHours(now, -3)),
     postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
-    createdAt: iso(addDays(now, -3)), updatedAt: iso(addDays(now, -1)) },
+    createdAt: iso(addDays(now, -3)), updatedAt: iso(addHours(now, -3)) },
   { id: "t-9", leadId: "l-12", propertyId: "p-2", tcmId: "tcm-2",
     scheduledAt: iso(at(addDays(now, -2), 14, 0)), status: "completed", decision: null,
+    completedAt: iso(addMinutes(now, -25)),
     postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
-    createdAt: iso(addDays(now, -4)), updatedAt: iso(addDays(now, -2)) },
+    createdAt: iso(addDays(now, -4)), updatedAt: iso(addMinutes(now, -25)) },
   { id: "t-10", leadId: "l-14", propertyId: "p-2", tcmId: "tcm-2",
     scheduledAt: iso(at(addDays(now, -3), 11, 0)), status: "completed", decision: "thinking",
     postTour: { outcome: "thinking", confidence: 60, objection: "Other Options", objectionNote: "Comparing 2 properties", expectedDecisionAt: iso(addDays(now, 4)), nextFollowUpAt: iso(addDays(now, 2)), filledAt: iso(addDays(now, -3)) },
@@ -243,7 +246,9 @@ export const TOURS: Tour[] = [
     postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
     createdAt: iso(now), updatedAt: iso(now) },
   { id: "t-11", leadId: "l-17", propertyId: "p-3", tcmId: "tcm-3",
-    scheduledAt: iso(at(now, 15, 30)), status: "scheduled", decision: null,
+    scheduledAt: iso(addHours(now, 2)), status: "scheduled", decision: null,
+    originallyScheduledAt: iso(addHours(now, 2)),
+    vacancyConfirmedAt: null,
     postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
     createdAt: iso(addDays(now, -1)), updatedAt: iso(addHours(now, -5)) },
 
@@ -264,6 +269,20 @@ export const TOURS: Tour[] = [
     scheduledAt: iso(at(addDays(now, 1), 11, 0)), status: "scheduled", decision: null,
     postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
     createdAt: iso(addHours(now, -4)), updatedAt: iso(addHours(now, -4)) },
+  /* demo: no-show rescue on Today */
+  { id: "t-15", leadId: "l-18", propertyId: "p-3", tcmId: "tcm-3",
+    scheduledAt: iso(at(addDays(now, -1), 11, 0)), status: "no-show", decision: null,
+    noShowAt: iso(addHours(now, -2)),
+    noShowReason: "didnt-answer",
+    postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
+    createdAt: iso(addDays(now, -3)), updatedAt: iso(addHours(now, -2)) },
+  /* demo: vacancy lock — tour in 90m, property full */
+  { id: "t-16", leadId: "l-7", propertyId: "p-5", tcmId: "tcm-3",
+    scheduledAt: iso(addHours(now, 1.5)), status: "scheduled", decision: null,
+    originallyScheduledAt: iso(at(addDays(now, 1), 10, 0)),
+    vacancyConfirmedAt: null,
+    postTour: { outcome: null, confidence: 0, objection: null, objectionNote: "", expectedDecisionAt: null, nextFollowUpAt: null, filledAt: null },
+    createdAt: iso(addDays(now, -2)), updatedAt: iso(addHours(now, -4)) },
 ];
 
 export const ACTIVITIES: ActivityLog[] = [
@@ -294,6 +313,8 @@ export const FOLLOWUPS: FollowUp[] = [
   { id: "f-4", leadId: "l-7", tcmId: "tcm-3", dueAt: iso(addHours(now, 2)), priority: "medium", done: false, reason: "First contact — Arjun" },
   { id: "f-11", leadId: "l-16", tcmId: "tcm-3", dueAt: iso(addDays(now, -2)), priority: "low", done: false, reason: "Resurrect ghost — Manish" },
   { id: "f-12", leadId: "l-18", tcmId: "tcm-3", dueAt: iso(addDays(now, -1)), priority: "low", done: false, reason: "Move-in too far — sanity check" },
+  { id: "f-16", tourId: "t-15", leadId: "l-18", tcmId: "tcm-3", dueAt: iso(addMinutes(now, -15)), priority: "high", done: false, reason: "No-show rescue · call now" },
+  { id: "f-17", tourId: "t-15", leadId: "l-18", tcmId: "tcm-3", dueAt: iso(addHours(now, 20)), priority: "medium", done: false, reason: "No-show · offer new slot" },
 
   /* tcm-4 — close-day */
   { id: "f-13", tourId: "t-13", leadId: "l-20", tcmId: "tcm-4", dueAt: iso(addHours(now, 6)), priority: "high", done: false, reason: "Paperwork sign-off — Harsh" },

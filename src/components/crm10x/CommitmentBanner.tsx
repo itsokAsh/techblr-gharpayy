@@ -8,7 +8,7 @@ import { toast } from "sonner";
 /** Banner that surfaces the lead's own commitment date — separate from agent follow-ups. */
 export function CommitmentBanner({ lead }: { lead: Lead }) {
   const commitment = useCRM10x((s) =>
-    s.commitments.filter((c) => c.leadId === lead.id && c.status === "pending")[0]);
+    s.commitments.find((c) => c.leadId === lead.id && c.status === "pending") ?? null);
   const resolve = useCRM10x((s) => s.resolveCommitment);
   if (!commitment) return null;
 

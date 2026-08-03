@@ -16,7 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { useIdentityStore } from "@/lib/lead-identity/store";
+import { checkDuplicatesBridged, createLeadWithCrmSync } from "@/lib/lead-identity/bridge";
+import { getTcm } from "@/lib/store";
 import { detectZone, parseLead } from "@/lib/lead-identity/parser";
 import { teamMembers } from "@/myt/lib/mock-data";
 import { toast } from "sonner";
@@ -61,8 +62,7 @@ const BLR_OPTS = [
 ];
 
 export function QuickAddLeadPanel({ open, onClose }: Props) {
-  const checkDup = useIdentityStore((s) => s.checkDuplicates);
-  const create = useIdentityStore((s) => s.createLead);
+  const checkDup = checkDuplicatesBridged;
 
   // Core
   const [name, setName] = useState("");
@@ -114,7 +114,7 @@ export function QuickAddLeadPanel({ open, onClose }: Props) {
     }
     const areasArr = areasText.split(",").map((a) => a.trim()).filter(Boolean);
     const assignee = teamMembers.find((m) => m.id === assigneeId);
-    const lead = create(
+    const { unified, assignment } = createLeadWithCrmSync(
       {
         name: name.trim(),
         phone: phone.trim(),
@@ -136,9 +136,11 @@ export function QuickAddLeadPanel({ open, onClose }: Props) {
         zoneCategory: zoneBucket,
         assigneeId: assignee?.id ?? null,
         assigneeName: assignee?.name ?? null,
+        source: "Quick add",
       },
     );
-    toast.success(`Lead saved · ${lead.name}`);
+    const tcm = getTcm(assignment.tcmId);
+    toast.success(`Lead saved · ${unified.name} · ${tcm?.name ?? "TCM"}`);
     if (keepOpen) reset(); else onClose();
   };
 

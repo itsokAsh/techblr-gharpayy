@@ -13,6 +13,16 @@ export function normalizePhoneIN(input: string): string {
   return `+91${d}`;
 }
 
+/** Display-safe phone — last 4 digits only. Use in lists/modals; never log raw. */
+export function maskPhoneDisplay(input: string | undefined | null): string {
+  if (!input?.trim()) return "no phone";
+  const e164 = normalizePhoneIN(input);
+  const digits = (e164 || input).replace(/\D/g, "");
+  const last10 = digits.slice(-10);
+  if (last10.length < 4) return "••••";
+  return `+91 ******${last10.slice(-4)}`;
+}
+
 export function normalizeEmail(input: string): string {
   if (!input) return "";
   const e = input.trim().toLowerCase();
@@ -34,6 +44,19 @@ export function normalizeName(input: string): string {
     .replace(/[^a-z\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/** Coerce free-text move-in ("Last week of April") to a valid ISO date. */
+export function toMoveInIso(raw: string | undefined | null): string {
+  if (!raw?.trim()) return new Date().toISOString();
+  const parsed = Date.parse(raw);
+  if (!Number.isNaN(parsed)) return new Date(parsed).toISOString();
+  return new Date().toISOString();
+}
+
+export function isValidDateInput(raw: string | undefined | null): boolean {
+  if (!raw?.trim()) return false;
+  return !Number.isNaN(Date.parse(raw));
 }
 
 /** Parse a raw budget string like "₹8-12k" or "10000" into a single number (lower bound). */

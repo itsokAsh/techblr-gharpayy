@@ -32,6 +32,7 @@ export function pgsAsProperties(): Property[] {
       area: pg.area,
       totalBeds: eff.totalBeds,
       vacantBeds: eff.vacantBeds,
+      version: 1,
       daysSinceLastBooking,
       pricePerBed: pickPricePerBed(pg),
     };

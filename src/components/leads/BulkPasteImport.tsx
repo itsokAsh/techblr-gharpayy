@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { parseLead, splitLeads } from "@/lib/lead-identity/parser";
-import { useIdentityStore } from "@/lib/lead-identity/store";
+import { checkDuplicatesBridged, createLeadWithCrmSync } from "@/lib/lead-identity/bridge";
 import type { MatchResult, ParsedLeadDraft } from "@/lib/lead-identity/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,8 +21,6 @@ const matchColor = (t: MatchResult["type"]) =>
   : "bg-primary/10 text-primary border-primary/30";
 
 export function BulkPasteImport() {
-  const checkDuplicates = useIdentityStore((s) => s.checkDuplicates);
-  const createLead = useIdentityStore((s) => s.createLead);
   const [raw, setRaw] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
 
@@ -31,7 +29,7 @@ export function BulkPasteImport() {
     const drafts = chunks.map(parseLead).filter((d): d is ParsedLeadDraft => !!d);
     if (!drafts.length) { toast.error("No leads detected in pasted text"); return; }
     const next: Row[] = drafts.map((d) => {
-      const m = checkDuplicates(d);
+      const m = checkDuplicatesBridged(d);
       return { draft: d, match: m, selected: m.type !== "exact" };
     });
     setRows(next);
@@ -42,7 +40,7 @@ export function BulkPasteImport() {
     let created = 0;
     for (const r of rows) {
       if (!r.selected || r.match.type === "exact") continue;
-      createLead(r.draft);
+      createLeadWithCrmSync(r.draft, { source: "Bulk paste" });
       created++;
     }
     toast.success(`Imported ${created} leads`);

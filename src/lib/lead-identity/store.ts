@@ -91,6 +91,9 @@ interface IdentityStore {
   getActivities: (ulid: string) => ActivityEntry[];
   getRequestsForOwner: (ownerId: string) => AccessRequest[];
   getRequestsByMe: (userId: string) => AccessRequest[];
+
+  /** Link CRM row after identity ↔ CRM bridge sync. */
+  linkCrmLead: (ulid: string, crmLeadId: string) => void;
 }
 
 const nowIso = () => new Date().toISOString();
@@ -488,7 +491,28 @@ export const useIdentityStore = create<IdentityStore>()(
       getRequestsForOwner: (ownerId) =>
         get().requests.filter((r) => r.toOwnerId === ownerId && r.state === "pending"),
       getRequestsByMe: (userId) => get().requests.filter((r) => r.requesterId === userId),
+
+      linkCrmLead: (ulid, crmLeadId) => {
+        const existing = get().leads.find((l) => l.ulid === ulid);
+        if (existing?.crmLeadId === crmLeadId) return;
+        set((s) => ({
+          leads: s.leads.map((l) =>
+            l.ulid === ulid ? { ...l, crmLeadId, updatedAt: nowIso() } : l,
+          ),
+        }));
+      },
     }),
-    { name: "lead-identity-store-v1" },
+    {
+      name: "lead-identity-store-v1",
+      onRehydrateStorage: () => (_state, err) => {
+        if (err) return;
+        // Hydrate CRM outside React — avoids effect/persist feedback loops.
+        queueMicrotask(() => {
+          void import("./bridge").then(({ hydrateCrmFromIdentity }) => {
+            hydrateCrmFromIdentity();
+          });
+        });
+      },
+    },
   ),
 );

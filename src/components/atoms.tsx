@@ -22,7 +22,16 @@ export function IntentChip({ intent, className }: { intent: Intent; className?: 
   );
 }
 
-export function StageBadge({ stage }: { stage: LeadStage }) {
+export function StageBadge({ stage, tags }: { stage: LeadStage; tags?: string[] }) {
+  // No-show demotes funnel stage to "contacted" so rebooking works — but the
+  // operational badge should still say No-show until the tag is cleared on rebook.
+  if (tags?.includes("no-show")) {
+    return (
+      <span className="inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium bg-destructive/10 text-destructive border-destructive/20">
+        No-show
+      </span>
+    );
+  }
   const map: Record<LeadStage, string> = {
     "new": "bg-info/10 text-info border-info/20",
     "contacted": "bg-secondary text-secondary-foreground border-border",

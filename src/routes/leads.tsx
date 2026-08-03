@@ -1,13 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useApp } from "@/lib/store";
 import { ConfidenceBar, IntentChip, StageBadge } from "@/components/atoms";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import type { LeadStage } from "@/lib/types";
 import { useMountedNow } from "@/hooks/use-now";
+import { ClipboardPaste } from "lucide-react";
+import { maskPhoneDisplay } from "@/lib/lead-identity/normalize";
 
 export const Route = createFileRoute("/leads")({
   head: () => ({
@@ -46,6 +49,11 @@ function LeadsPage() {
             <p className="text-sm text-muted-foreground">{filtered.length} of {leads.length} · ranked by deal probability</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Button size="sm" className="h-9 gap-1.5" asChild>
+              <Link to="/myt/leads">
+                <ClipboardPaste className="h-3.5 w-3.5" /> Paste from WhatsApp
+              </Link>
+            </Button>
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or phone…" className="h-9 w-56 text-sm" />
             <Select value={stage} onValueChange={setStage}>
               <SelectTrigger className="h-9 w-44 text-sm"><SelectValue /></SelectTrigger>
@@ -86,10 +94,17 @@ function LeadsPage() {
                     className="w-full text-left grid grid-cols-12 px-4 py-3 items-center hover:bg-accent/5 transition-colors"
                   >
                     <div className="col-span-3">
-                      <div className="font-medium text-sm">{l.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{l.phone} · {l.source}</div>
+                      <div className="font-medium text-sm flex items-center gap-2">
+                        {l.name}
+                        {l.identityUlid && (
+                          <span className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                            pasted
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground font-mono">{maskPhoneDisplay(l.phone)} · {l.source}</div>
                     </div>
-                    <div className="col-span-2"><StageBadge stage={l.stage} /></div>
+                    <div className="col-span-2"><StageBadge stage={l.stage} tags={l.tags} /></div>
                     <div className="col-span-2 flex items-center gap-2">
                       <IntentChip intent={l.intent} />
                       <ConfidenceBar value={l.confidence} />
@@ -110,7 +125,12 @@ function LeadsPage() {
               );
             })}
             {filtered.length === 0 && (
-              <div className="text-center py-12 text-sm text-muted-foreground">No leads match.</div>
+              <div className="text-center py-12 text-sm text-muted-foreground space-y-3">
+                <p>No leads match.</p>
+                <Button size="sm" variant="outline" asChild>
+                  <Link to="/myt/leads">Paste a lead from WhatsApp</Link>
+                </Button>
+              </div>
             )}
           </div>
         </div>

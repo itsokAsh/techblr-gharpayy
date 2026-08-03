@@ -15,6 +15,7 @@ import { downloadAdminWorkbook } from "@/admin/lib/exporters/xlsx";
 import { downloadAdminPdf } from "@/admin/lib/exporters/pdf";
 import { toast } from "sonner";
 import type { AdminLeadRow } from "@/admin/lib/selectors";
+import { maskPhoneDisplay } from "@/lib/lead-identity/normalize";
 
 export const Route = createFileRoute("/admin/leads")({
   component: AdminLeads,
@@ -104,7 +105,7 @@ function AdminLeads() {
                   <td className="p-2"><input type="checkbox" checked={selected.has(r.lead.id)} onChange={() => toggle(r.lead.id)} /></td>
                   <td className="p-2">
                     <button onClick={() => setDrawer(r)} className="font-medium hover:underline text-left">{r.lead.name}</button>
-                    <div className="text-[10px] text-muted-foreground font-mono">{r.lead.phone}</div>
+                    <div className="text-[10px] text-muted-foreground font-mono">{maskPhoneDisplay(r.lead.phone)}</div>
                   </td>
                   <td className="p-2"><span className="text-[10px] px-1.5 py-0.5 rounded bg-muted">{r.lead.stage}</span></td>
                   <td className="p-2">{r.tcm?.name ?? "—"}</td>

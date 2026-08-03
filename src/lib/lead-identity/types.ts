@@ -53,6 +53,8 @@ export interface LeadAnchors {
 
 export interface UnifiedLead {
   ulid: string;                 // Universal Lead ID
+  /** CRM row id in `useApp` store — set by lead-identity bridge. */
+  crmLeadId?: string;
   name: string;
   phoneE164: string;            // normalized: +91XXXXXXXXXX
   phoneRaw: string;

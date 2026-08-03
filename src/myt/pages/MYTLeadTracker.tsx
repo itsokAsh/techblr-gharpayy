@@ -11,6 +11,7 @@ import { useNavigate } from '@/shims/react-router-dom';
 import { PasteToLead } from '@/components/leads/PasteToLead';
 import { RequestAccessSheet } from '@/components/leads/RequestAccessSheet';
 import { useIdentityStore } from '@/lib/lead-identity/store';
+import { openCrmLeadForUnified } from '@/lib/lead-identity/bridge';
 import { ParserTestModal } from '@/components/leads/ParserTestModal';
 import { QuickAddLeadPanel } from '@/components/leads/QuickAddLeadPanel';
 import { usePip } from '@/components/pip/PipProvider';
@@ -19,7 +20,11 @@ export default function MYTLeadTracker() {
   const { leads, setLeads, currentMemberId } = useAppState();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'paste' | 'manual' | 'requests'>('paste');
-  const identityLeadCount = useIdentityStore((s) => s.leads.length);
+  // Select stable store refs only — never .slice/.filter inside the selector
+  // (new arrays every snapshot → React "Maximum update depth exceeded").
+  const identityLeads = useIdentityStore((s) => s.leads);
+  const identityLeadCount = identityLeads.length;
+  const recentPasted = identityLeads.slice(0, 5);
   const [showForm, setShowForm] = useState(false);
   const [showParserTest, setShowParserTest] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
@@ -160,7 +165,32 @@ export default function MYTLeadTracker() {
         </div>
       </div>
 
-      {mode === 'paste' && <PasteToLead />}
+      {mode === 'paste' && (
+        <>
+          <PasteToLead />
+          {recentPasted.length > 0 && (
+            <div className="glass-card p-3 md:p-4 space-y-2">
+              <h3 className="font-heading font-semibold text-xs md:text-sm">Recently pasted (saved to CRM)</h3>
+              <div className="space-y-1.5">
+                {recentPasted.map((l) => (
+                  <button
+                    key={l.ulid}
+                    type="button"
+                    onClick={() => openCrmLeadForUnified(l.ulid)}
+                    className="w-full text-left flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-surface-2/50 hover:bg-surface-2 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <span className="font-medium text-sm text-foreground">{l.name}</span>
+                      <span className="text-muted-foreground text-xs ml-2">{l.area || l.areas?.[0] || '—'}</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground shrink-0">{l.phoneRaw || l.phoneE164}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
       {mode === 'requests' && <RequestAccessSheet />}
       {mode === 'manual' && (
         <div className="flex justify-end">

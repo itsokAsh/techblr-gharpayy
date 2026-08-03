@@ -30,6 +30,10 @@ const ICON: Record<ActivityKind, typeof Activity> = {
   call_logged: Phone,
   escalation: AlertTriangle,
   stale_alert: AlertTriangle,
+  tour_no_show: AlertTriangle,
+  tour_vacancy_confirmed: CheckCircle2,
+  tour_pre_check_ok: CheckCircle2,
+  tour_pre_check_problem: AlertTriangle,
 };
 
 function ActivityPage() {

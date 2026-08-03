@@ -102,7 +102,16 @@ import { Route as MytTourIdRouteImport } from './routes/myt/tour.$id'
 import { Route as MytTcmPerformanceRouteImport } from './routes/myt/tcm.performance'
 import { Route as MytTcmActionsRouteImport } from './routes/myt/tcm.actions'
 import { Route as MytFeedbackIdRouteImport } from './routes/myt/feedback.$id'
+import { Route as ApiOpsJobsRouteImport } from './routes/api/ops/jobs'
+import { Route as ApiOpsHealthRouteImport } from './routes/api/ops/health'
 import { Route as MytTourIdReportRouteImport } from './routes/myt/tour.$id.report'
+import { Route as ApiOpsTodayQueueRouteImport } from './routes/api/ops/today.queue'
+import { Route as ApiOpsPropertiesPropertyIdRouteImport } from './routes/api/ops/properties.$propertyId'
+import { Route as ApiOpsLeadsIngestRouteImport } from './routes/api/ops/leads.ingest'
+import { Route as ApiOpsCacheInvalidateRouteImport } from './routes/api/ops/cache.invalidate'
+import { Route as ApiOpsToursTourIdPreCheckRouteImport } from './routes/api/ops/tours.$tourId.pre-check'
+import { Route as ApiOpsToursTourIdNoShowRouteImport } from './routes/api/ops/tours.$tourId.no-show'
+import { Route as ApiOpsPropertiesPropertyIdVacancyRouteImport } from './routes/api/ops/properties.$propertyId.vacancy'
 
 const ZoneBrainRoute = ZoneBrainRouteImport.update({
   id: '/zone-brain',
@@ -569,11 +578,59 @@ const MytFeedbackIdRoute = MytFeedbackIdRouteImport.update({
   path: '/myt/feedback/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOpsJobsRoute = ApiOpsJobsRouteImport.update({
+  id: '/api/ops/jobs',
+  path: '/api/ops/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOpsHealthRoute = ApiOpsHealthRouteImport.update({
+  id: '/api/ops/health',
+  path: '/api/ops/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MytTourIdReportRoute = MytTourIdReportRouteImport.update({
   id: '/report',
   path: '/report',
   getParentRoute: () => MytTourIdRoute,
 } as any)
+const ApiOpsTodayQueueRoute = ApiOpsTodayQueueRouteImport.update({
+  id: '/api/ops/today/queue',
+  path: '/api/ops/today/queue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOpsPropertiesPropertyIdRoute =
+  ApiOpsPropertiesPropertyIdRouteImport.update({
+    id: '/api/ops/properties/$propertyId',
+    path: '/api/ops/properties/$propertyId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiOpsLeadsIngestRoute = ApiOpsLeadsIngestRouteImport.update({
+  id: '/api/ops/leads/ingest',
+  path: '/api/ops/leads/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOpsCacheInvalidateRoute = ApiOpsCacheInvalidateRouteImport.update({
+  id: '/api/ops/cache/invalidate',
+  path: '/api/ops/cache/invalidate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOpsToursTourIdPreCheckRoute =
+  ApiOpsToursTourIdPreCheckRouteImport.update({
+    id: '/api/ops/tours/$tourId/pre-check',
+    path: '/api/ops/tours/$tourId/pre-check',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiOpsToursTourIdNoShowRoute = ApiOpsToursTourIdNoShowRouteImport.update({
+  id: '/api/ops/tours/$tourId/no-show',
+  path: '/api/ops/tours/$tourId/no-show',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOpsPropertiesPropertyIdVacancyRoute =
+  ApiOpsPropertiesPropertyIdVacancyRouteImport.update({
+    id: '/vacancy',
+    path: '/vacancy',
+    getParentRoute: () => ApiOpsPropertiesPropertyIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -664,12 +721,21 @@ export interface FileRoutesByFullPath {
   '/myt/': typeof MytIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/supply-hub/': typeof SupplyHubIndexRoute
+  '/api/ops/health': typeof ApiOpsHealthRoute
+  '/api/ops/jobs': typeof ApiOpsJobsRoute
   '/myt/feedback/$id': typeof MytFeedbackIdRoute
   '/myt/tcm/actions': typeof MytTcmActionsRoute
   '/myt/tcm/performance': typeof MytTcmPerformanceRoute
   '/myt/tour/$id': typeof MytTourIdRouteWithChildren
   '/owner/media/$roomId': typeof OwnerMediaRoomIdRoute
+  '/api/ops/cache/invalidate': typeof ApiOpsCacheInvalidateRoute
+  '/api/ops/leads/ingest': typeof ApiOpsLeadsIngestRoute
+  '/api/ops/properties/$propertyId': typeof ApiOpsPropertiesPropertyIdRouteWithChildren
+  '/api/ops/today/queue': typeof ApiOpsTodayQueueRoute
   '/myt/tour/$id/report': typeof MytTourIdReportRoute
+  '/api/ops/properties/$propertyId/vacancy': typeof ApiOpsPropertiesPropertyIdVacancyRoute
+  '/api/ops/tours/$tourId/no-show': typeof ApiOpsToursTourIdNoShowRoute
+  '/api/ops/tours/$tourId/pre-check': typeof ApiOpsToursTourIdPreCheckRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -759,12 +825,21 @@ export interface FileRoutesByTo {
   '/myt': typeof MytIndexRoute
   '/owner': typeof OwnerIndexRoute
   '/supply-hub': typeof SupplyHubIndexRoute
+  '/api/ops/health': typeof ApiOpsHealthRoute
+  '/api/ops/jobs': typeof ApiOpsJobsRoute
   '/myt/feedback/$id': typeof MytFeedbackIdRoute
   '/myt/tcm/actions': typeof MytTcmActionsRoute
   '/myt/tcm/performance': typeof MytTcmPerformanceRoute
   '/myt/tour/$id': typeof MytTourIdRouteWithChildren
   '/owner/media/$roomId': typeof OwnerMediaRoomIdRoute
+  '/api/ops/cache/invalidate': typeof ApiOpsCacheInvalidateRoute
+  '/api/ops/leads/ingest': typeof ApiOpsLeadsIngestRoute
+  '/api/ops/properties/$propertyId': typeof ApiOpsPropertiesPropertyIdRouteWithChildren
+  '/api/ops/today/queue': typeof ApiOpsTodayQueueRoute
   '/myt/tour/$id/report': typeof MytTourIdReportRoute
+  '/api/ops/properties/$propertyId/vacancy': typeof ApiOpsPropertiesPropertyIdVacancyRoute
+  '/api/ops/tours/$tourId/no-show': typeof ApiOpsToursTourIdNoShowRoute
+  '/api/ops/tours/$tourId/pre-check': typeof ApiOpsToursTourIdPreCheckRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -856,12 +931,21 @@ export interface FileRoutesById {
   '/myt/': typeof MytIndexRoute
   '/owner/': typeof OwnerIndexRoute
   '/supply-hub/': typeof SupplyHubIndexRoute
+  '/api/ops/health': typeof ApiOpsHealthRoute
+  '/api/ops/jobs': typeof ApiOpsJobsRoute
   '/myt/feedback/$id': typeof MytFeedbackIdRoute
   '/myt/tcm/actions': typeof MytTcmActionsRoute
   '/myt/tcm/performance': typeof MytTcmPerformanceRoute
   '/myt/tour/$id': typeof MytTourIdRouteWithChildren
   '/owner/media/$roomId': typeof OwnerMediaRoomIdRoute
+  '/api/ops/cache/invalidate': typeof ApiOpsCacheInvalidateRoute
+  '/api/ops/leads/ingest': typeof ApiOpsLeadsIngestRoute
+  '/api/ops/properties/$propertyId': typeof ApiOpsPropertiesPropertyIdRouteWithChildren
+  '/api/ops/today/queue': typeof ApiOpsTodayQueueRoute
   '/myt/tour/$id/report': typeof MytTourIdReportRoute
+  '/api/ops/properties/$propertyId/vacancy': typeof ApiOpsPropertiesPropertyIdVacancyRoute
+  '/api/ops/tours/$tourId/no-show': typeof ApiOpsToursTourIdNoShowRoute
+  '/api/ops/tours/$tourId/pre-check': typeof ApiOpsToursTourIdPreCheckRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -954,12 +1038,21 @@ export interface FileRouteTypes {
     | '/myt/'
     | '/owner/'
     | '/supply-hub/'
+    | '/api/ops/health'
+    | '/api/ops/jobs'
     | '/myt/feedback/$id'
     | '/myt/tcm/actions'
     | '/myt/tcm/performance'
     | '/myt/tour/$id'
     | '/owner/media/$roomId'
+    | '/api/ops/cache/invalidate'
+    | '/api/ops/leads/ingest'
+    | '/api/ops/properties/$propertyId'
+    | '/api/ops/today/queue'
     | '/myt/tour/$id/report'
+    | '/api/ops/properties/$propertyId/vacancy'
+    | '/api/ops/tours/$tourId/no-show'
+    | '/api/ops/tours/$tourId/pre-check'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1049,12 +1142,21 @@ export interface FileRouteTypes {
     | '/myt'
     | '/owner'
     | '/supply-hub'
+    | '/api/ops/health'
+    | '/api/ops/jobs'
     | '/myt/feedback/$id'
     | '/myt/tcm/actions'
     | '/myt/tcm/performance'
     | '/myt/tour/$id'
     | '/owner/media/$roomId'
+    | '/api/ops/cache/invalidate'
+    | '/api/ops/leads/ingest'
+    | '/api/ops/properties/$propertyId'
+    | '/api/ops/today/queue'
     | '/myt/tour/$id/report'
+    | '/api/ops/properties/$propertyId/vacancy'
+    | '/api/ops/tours/$tourId/no-show'
+    | '/api/ops/tours/$tourId/pre-check'
   id:
     | '__root__'
     | '/'
@@ -1145,12 +1247,21 @@ export interface FileRouteTypes {
     | '/myt/'
     | '/owner/'
     | '/supply-hub/'
+    | '/api/ops/health'
+    | '/api/ops/jobs'
     | '/myt/feedback/$id'
     | '/myt/tcm/actions'
     | '/myt/tcm/performance'
     | '/myt/tour/$id'
     | '/owner/media/$roomId'
+    | '/api/ops/cache/invalidate'
+    | '/api/ops/leads/ingest'
+    | '/api/ops/properties/$propertyId'
+    | '/api/ops/today/queue'
     | '/myt/tour/$id/report'
+    | '/api/ops/properties/$propertyId/vacancy'
+    | '/api/ops/tours/$tourId/no-show'
+    | '/api/ops/tours/$tourId/pre-check'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1227,9 +1338,17 @@ export interface RootRouteChildren {
   MytIndexRoute: typeof MytIndexRoute
   OwnerIndexRoute: typeof OwnerIndexRoute
   SupplyHubIndexRoute: typeof SupplyHubIndexRoute
+  ApiOpsHealthRoute: typeof ApiOpsHealthRoute
+  ApiOpsJobsRoute: typeof ApiOpsJobsRoute
   MytFeedbackIdRoute: typeof MytFeedbackIdRoute
   MytTourIdRoute: typeof MytTourIdRouteWithChildren
   OwnerMediaRoomIdRoute: typeof OwnerMediaRoomIdRoute
+  ApiOpsCacheInvalidateRoute: typeof ApiOpsCacheInvalidateRoute
+  ApiOpsLeadsIngestRoute: typeof ApiOpsLeadsIngestRoute
+  ApiOpsPropertiesPropertyIdRoute: typeof ApiOpsPropertiesPropertyIdRouteWithChildren
+  ApiOpsTodayQueueRoute: typeof ApiOpsTodayQueueRoute
+  ApiOpsToursTourIdNoShowRoute: typeof ApiOpsToursTourIdNoShowRoute
+  ApiOpsToursTourIdPreCheckRoute: typeof ApiOpsToursTourIdPreCheckRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1885,12 +2004,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MytFeedbackIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ops/jobs': {
+      id: '/api/ops/jobs'
+      path: '/api/ops/jobs'
+      fullPath: '/api/ops/jobs'
+      preLoaderRoute: typeof ApiOpsJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/health': {
+      id: '/api/ops/health'
+      path: '/api/ops/health'
+      fullPath: '/api/ops/health'
+      preLoaderRoute: typeof ApiOpsHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/myt/tour/$id/report': {
       id: '/myt/tour/$id/report'
       path: '/report'
       fullPath: '/myt/tour/$id/report'
       preLoaderRoute: typeof MytTourIdReportRouteImport
       parentRoute: typeof MytTourIdRoute
+    }
+    '/api/ops/today/queue': {
+      id: '/api/ops/today/queue'
+      path: '/api/ops/today/queue'
+      fullPath: '/api/ops/today/queue'
+      preLoaderRoute: typeof ApiOpsTodayQueueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/properties/$propertyId': {
+      id: '/api/ops/properties/$propertyId'
+      path: '/api/ops/properties/$propertyId'
+      fullPath: '/api/ops/properties/$propertyId'
+      preLoaderRoute: typeof ApiOpsPropertiesPropertyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/leads/ingest': {
+      id: '/api/ops/leads/ingest'
+      path: '/api/ops/leads/ingest'
+      fullPath: '/api/ops/leads/ingest'
+      preLoaderRoute: typeof ApiOpsLeadsIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/cache/invalidate': {
+      id: '/api/ops/cache/invalidate'
+      path: '/api/ops/cache/invalidate'
+      fullPath: '/api/ops/cache/invalidate'
+      preLoaderRoute: typeof ApiOpsCacheInvalidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/tours/$tourId/pre-check': {
+      id: '/api/ops/tours/$tourId/pre-check'
+      path: '/api/ops/tours/$tourId/pre-check'
+      fullPath: '/api/ops/tours/$tourId/pre-check'
+      preLoaderRoute: typeof ApiOpsToursTourIdPreCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/tours/$tourId/no-show': {
+      id: '/api/ops/tours/$tourId/no-show'
+      path: '/api/ops/tours/$tourId/no-show'
+      fullPath: '/api/ops/tours/$tourId/no-show'
+      preLoaderRoute: typeof ApiOpsToursTourIdNoShowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ops/properties/$propertyId/vacancy': {
+      id: '/api/ops/properties/$propertyId/vacancy'
+      path: '/vacancy'
+      fullPath: '/api/ops/properties/$propertyId/vacancy'
+      preLoaderRoute: typeof ApiOpsPropertiesPropertyIdVacancyRouteImport
+      parentRoute: typeof ApiOpsPropertiesPropertyIdRoute
     }
   }
 }
@@ -1966,6 +2148,21 @@ const MytTourIdRouteWithChildren = MytTourIdRoute._addFileChildren(
   MytTourIdRouteChildren,
 )
 
+interface ApiOpsPropertiesPropertyIdRouteChildren {
+  ApiOpsPropertiesPropertyIdVacancyRoute: typeof ApiOpsPropertiesPropertyIdVacancyRoute
+}
+
+const ApiOpsPropertiesPropertyIdRouteChildren: ApiOpsPropertiesPropertyIdRouteChildren =
+  {
+    ApiOpsPropertiesPropertyIdVacancyRoute:
+      ApiOpsPropertiesPropertyIdVacancyRoute,
+  }
+
+const ApiOpsPropertiesPropertyIdRouteWithChildren =
+  ApiOpsPropertiesPropertyIdRoute._addFileChildren(
+    ApiOpsPropertiesPropertyIdRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityRoute: ActivityRoute,
@@ -2040,9 +2237,17 @@ const rootRouteChildren: RootRouteChildren = {
   MytIndexRoute: MytIndexRoute,
   OwnerIndexRoute: OwnerIndexRoute,
   SupplyHubIndexRoute: SupplyHubIndexRoute,
+  ApiOpsHealthRoute: ApiOpsHealthRoute,
+  ApiOpsJobsRoute: ApiOpsJobsRoute,
   MytFeedbackIdRoute: MytFeedbackIdRoute,
   MytTourIdRoute: MytTourIdRouteWithChildren,
   OwnerMediaRoomIdRoute: OwnerMediaRoomIdRoute,
+  ApiOpsCacheInvalidateRoute: ApiOpsCacheInvalidateRoute,
+  ApiOpsLeadsIngestRoute: ApiOpsLeadsIngestRoute,
+  ApiOpsPropertiesPropertyIdRoute: ApiOpsPropertiesPropertyIdRouteWithChildren,
+  ApiOpsTodayQueueRoute: ApiOpsTodayQueueRoute,
+  ApiOpsToursTourIdNoShowRoute: ApiOpsToursTourIdNoShowRoute,
+  ApiOpsToursTourIdPreCheckRoute: ApiOpsToursTourIdPreCheckRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
